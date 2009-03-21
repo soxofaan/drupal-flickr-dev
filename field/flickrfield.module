@@ -138,10 +138,13 @@ function flickrfield_process($element, $edit, $form_state, $form) {
 function flickrfield_flickrid_process($element, $edit, $form_state, $form) {
   $element['flickrid'] = array(
     '#type' => 'textfield',
+    '#title' => $element['#title'],
+    '#description' => $element['#description'],
+    '#required' => $element['#required'],
     '#field_prefix' => t('Flickr ID: '),
+    '#default_value' => !empty($element['#value']['flickrid']) ? $element['#value']['flickrid'] : '',
     '#size' => 20,
     '#maxlength' => 20,
-    '#default_value' => !empty($element['#value']['flickrid']) ? $element['#value']['flickrid'] : '',
     '#attributes' => array('class' => 'flickrfield_flickrid'),
   );
   return $element;
@@ -288,17 +291,13 @@ function theme_flickrfield($element) {
 
 /**
  * Theme function for the Flickr ID form element.
+ *
+ * The textfield or textarea is already rendered by the
+ * textfield or textarea themes and the html output
+ * lives in $element['#children'].
  */
 function theme_flickrfield_flickrid($element) {
-  dpm($element);
-  // Get textfield for flickr ID.
-  $flickrid = $element['flickrid'];
-  // Set the user defined title and help text.
-  $flickrid['#title'] = $element['#title'];
-  $flickrid['#description'] = $element['#description'];
-  $flickrid['#required'] = $element['#required'];
-  // Theme as regular textfield.
-  return theme('textfield', $flickrid);
+  return $element['#children'];
 }
 
 
