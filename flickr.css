@@ -38,7 +38,7 @@
 
 .flickr-photoset-count {}
 
-
+/** Override for Drupal's default block, 95% width textfields on node forms. */
 .node-form .flickrfield_flickrid {
   display: inline;
   width: auto;
