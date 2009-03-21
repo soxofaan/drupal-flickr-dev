@@ -154,7 +154,11 @@ function flickrfield_flickrid_process($element, $edit, $form_state, $form) {
  * Implementation of hook_content_is_empty().
  */
 function flickrfield_content_is_empty($item, $field) {
-  return empty($item['id']);
+  if ($field['type'] == 'flickrfield') {
+    return empty($item['id']);
+  } else if ($field['type'] == 'flickrfield_photoset') {
+    return empty($item['flickrid']);
+  }
 }
 
 /**
