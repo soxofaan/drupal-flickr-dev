@@ -254,6 +254,10 @@ function theme_flickrfield_field_formatter($element) {
  * Theme a Flickr photo et as the primary photo of that set.
  */
 function theme_flickrfield_formatter_photoset_primaryphoto($element) {
+  require_once(drupal_get_path('module', 'flickr') .'/flickr.inc');
+  if (empty($element['#item']['flickrid'])) {
+    return;
+  }
   $size = substr($element['#formatter'], -1);
   $photo_data = flickr_photoset_get_info($element['#item']['flickrid']);
   $img = flickr_img($photo_data, $size);
@@ -266,6 +270,10 @@ function theme_flickrfield_formatter_photoset_primaryphoto($element) {
  * Theme a Flickr photo set as an embedded Flickr.com flash slideshow.
  */
 function theme_flickrfield_formatter_photoset_flickrcomslideshow($element) {
+  require_once(drupal_get_path('module', 'flickr') .'/flickr.inc');
+  if (empty($element['#item']['flickrid'])) {
+    return;
+  }
   $set_id = $element['#item']['flickrid'];
   $src = 'http://www.flickr.com/slideShow/index.gne?set_id='. $set_id;
   return '<div class="flickr-photoset-slideshow">'
