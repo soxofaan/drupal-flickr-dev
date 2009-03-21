@@ -175,12 +175,12 @@ function flickrfield_field_formatter_info() {
       );
   }
   // Formatters for Flickr photoset CCK field.
-  $formatters['flickrfield_photoset_flickrcom_slideshow'] = array(
+  $formatters['photoset_flickrcomslideshow'] = array(
     'label' => 'Embedded Flickr.com flash slideshow',
     'field types' => array('flickrfield_photoset'),
   );
   foreach ($sizes as $size => $info) {
-    $formatters['flickrfield_photoset_primaryphoto_size_'. $size] = array(
+    $formatters['photoset_primaryphoto_size'. $size] = array(
       'label' => t('Primary set photo at size "@size"', array('@size' => $info['label'])),
       'field types' => array('flickrfield_photoset'),
     );
@@ -198,7 +198,12 @@ function flickrfield_theme() {
     $themes['flickrfield_formatter_'. $size] = array(
       'arguments' => array('element'),
       'function' => 'theme_flickrfield_field_formatter',
-      );
+    );
+    // Theme function for the primary photo formatters of a Flickr photo set.
+    $themes['flickrfield_formatter_photoset_primaryphoto_size'. $size] = array(
+      'arguments' => array('element'),
+      'function' => 'theme_flickrfield_formatter_photoset_primaryphoto',
+    );
   }
   return $themes + array(
     'flickrfield_photo' => array(
@@ -211,6 +216,9 @@ function flickrfield_theme() {
       'arguments' => array('element'),
     ),
     'flickrfield_flickrid' => array(
+      'arguments' => array('element'),
+    ),
+    'flickrfield_formatter_photoset_flickrcomslideshow' => array(
       'arguments' => array('element'),
     )
   );
@@ -240,6 +248,29 @@ function theme_flickrfield_field_formatter($element) {
       $photo_url = flickr_photoset_page_url($photo_data['owner'], $photo_data['id']);
       return theme('flickrfield_photoset', $img, $photo_url, $formatter, $photo_data, $node);
   }
+}
+
+/**
+ * Theme a Flickr photo et as the primary photo of that set.
+ */
+function theme_flickrfield_formatter_photoset_primaryphoto($element) {
+  $size = substr($element['#formatter'], -1);
+  $photo_data = flickr_photoset_get_info($element['#item']['flickrid']);
+  $img = flickr_img($photo_data, $size);
+  $photo_url = flickr_photoset_page_url($photo_data['owner'], $photo_data['id']);
+  $node = $element['#node'];
+  return theme('flickrfield_photoset', $img, $photo_url, $size, $photo_data, $node);
+}
+
+/**
+ * Theme a Flickr photo set as an embedded Flickr.com flash slideshow.
+ */
+function theme_flickrfield_formatter_photoset_flickrcomslideshow($element) {
+  $set_id = $element['#item']['flickrid'];
+  $src = 'http://www.flickr.com/slideShow/index.gne?set_id='. $set_id;
+  return '<div class="flickr-photoset-slideshow">'
+    .'<iframe align="center" src="' . $src .'" frameBorder="0" width="500" scrolling="no" height="500"></iframe>'
+    .'</div>';
 }
 
 /**
