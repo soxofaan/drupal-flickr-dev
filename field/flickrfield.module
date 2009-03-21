@@ -36,7 +36,7 @@ function flickrfield_field_info() {
     ),
     'flickrfield_photoset' => array(
       'label' => 'Flickr photo set',
-      'description' => t('Field for a Flickr photo set.'),
+      'description' => t('Field for storing a reference to a Flickr photo set.'),
     )
   );
 }
@@ -296,12 +296,9 @@ function theme_flickrfield($element) {
 /**
  * Theme function for the Flickr ID form element.
  *
- * The textfield or textarea is already rendered by the
- * textfield or textarea themes and the html output
- * lives in $element['#children'].
+ * The textfield is already rendered by the textfield theme
+ * and the html output lives in $element['#children'].
  */
 function theme_flickrfield_flickrid($element) {
   return $element['#children'];
 }
-
-
