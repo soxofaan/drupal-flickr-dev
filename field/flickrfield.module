@@ -296,6 +296,7 @@ function theme_flickrfield_flickrid($element) {
   // Set the user defined title and help text.
   $flickrid['#title'] = $element['#title'];
   $flickrid['#description'] = $element['#description'];
+  $flickrid['#required'] = $element['#required'];
   // Theme as regular textfield.
   return theme('textfield', $flickrid);
 }
