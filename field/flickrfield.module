@@ -34,6 +34,10 @@ function flickrfield_field_info() {
       'label' => 'Flickr Photo',
       'description' => t('Store Flickr Photo or Photoset ids and display the photos in nodes and views.'),
     ),
+    'flickrfield_photoset' => array(
+      'label' => 'Flickr photo set',
+      'description' => t('Field for a Flickr photo set.'),
+    )
   );
 }
 
@@ -43,11 +47,18 @@ function flickrfield_field_info() {
 function flickrfield_field_settings($op, $field) {
   switch ($op) {
     case 'database columns':
-      $columns = array(
-        'id' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
-        'type' => array('type' => 'varchar', 'length' => 10, 'not null' => FALSE, 'sortable' => TRUE),
-        'nsid' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
-      );
+      if ($field['type'] == 'flickrfield') {
+        $columns = array(
+          'id' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
+          'type' => array('type' => 'varchar', 'length' => 10, 'not null' => FALSE, 'sortable' => TRUE),
+          'nsid' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
+        );
+      }
+      else if ($field['type'] == 'flickrfield_photoset') {
+        $columns = array(
+          'id' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
+        );
+      }
       return $columns;
   }
 }
@@ -65,6 +76,14 @@ function flickrfield_widget_info() {
         'default value' => CONTENT_CALLBACK_DEFAULT,
       ),
     ),
+    'flickrfield_flickrid' => array(
+      'label' => 'Flickr Id',
+      'field types' => array('flickrfield_photoset'),
+      'multiple values' => CONTENT_HANDLE_CORE,
+      'callbacks' => array(
+        'default value' => CONTENT_CALLBACK_DEFAULT,
+      ),
+    )
   );
 }
 
@@ -75,6 +94,11 @@ function flickrfield_elements() {
       '#columns' => array('type', 'id', 'uid'),
       '#process' => array('flickrfield_process'),
     ),
+    'flickrfield_flickrid' => array(
+      '#input' => TRUE,
+      '#columns' => array('id'),
+      '#process' => array('flickrfield_flickrid_process'),
+    )
   );
 }
 
@@ -111,6 +135,17 @@ function flickrfield_process($element, $edit, $form_state, $form) {
   return $element;
 }
 
+function flickrfield_flickrid_process($element, $edit, $form_state, $form) {
+  $element['id'] = array(
+    '#type' => 'textfield',
+    '#field_prefix' => t('Flickr ID: '),
+    '#size' => 20,
+    '#maxlength' => 20,
+    '#default_value' => !empty($element['#value']['id']) ? $element['#value']['id'] : '',
+  );
+  return $element;
+}
+
 /**
  * Implementation of hook_content_is_empty().
  */
@@ -123,11 +158,24 @@ function flickrfield_content_is_empty($item, $field) {
  */
 function flickrfield_field_formatter_info() {
   require_once(drupal_get_path('module', 'flickr') .'/flickr.inc');
-  foreach (flickr_photo_sizes() as $size => $info) {
+  $sizes = flickr_photo_sizes();
+  // Formatters for general Flickr CCK field.
+  foreach ($sizes as $size => $info) {
     $formatters[$size] = array(
       'label' => $info['label'],
       'field types' => array('flickrfield'),
       );
+  }
+  // Formatters for Flickr photoset CCK field.
+  $formatters['flickrfield_photoset_flickrcom_slideshow'] = array(
+    'label' => 'Embedded Flickr.com flash slideshow',
+    'field types' => array('flickrfield_photoset'),
+  );
+  foreach ($sizes as $size => $info) {
+    $formatters['flickrfield_photoset_primaryphoto_size_'. $size] = array(
+      'label' => t('Primary set photo at size "@size"', array('@size' => $info['label'])),
+      'field types' => array('flickrfield_photoset'),
+    );
   }
   return $formatters;
 }
@@ -154,6 +202,9 @@ function flickrfield_theme() {
     'flickrfield' => array(
       'arguments' => array('element'),
     ),
+    'flickrfield_flickrid' => array(
+      'arguments' => array('element'),
+    )
   );
 }
 
@@ -233,3 +284,19 @@ function theme_flickrfield($element) {
   );
   return theme('fieldset', $fieldset);
 }
+
+/**
+ * Theme function for the Flickr ID form element.
+ */
+function theme_flickrfield_flickrid($element) {
+  dpm($element);
+  // Get textfield for flickr ID.
+  $flickrid = $element['id'];
+  // Set the user defined title and help text.
+  $flickrid['#title'] = $element['#title'];
+  $flickrid['#description'] = $element['#description'];
+  // Theme as regular textfield.
+  return theme('textfield', $flickrid);
+}
+
+
