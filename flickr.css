@@ -37,3 +37,9 @@
 .flickr-photoset-title {}
 
 .flickr-photoset-count {}
+
+
+.node-form .flickrfield_flickrid {
+  display: inline;
+  width: auto;
+}

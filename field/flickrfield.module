@@ -142,6 +142,7 @@ function flickrfield_flickrid_process($element, $edit, $form_state, $form) {
     '#size' => 20,
     '#maxlength' => 20,
     '#default_value' => !empty($element['#value']['id']) ? $element['#value']['id'] : '',
+    '#attributes' => array('class' => 'flickrfield_flickrid'),
   );
   return $element;
 }
