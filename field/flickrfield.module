@@ -56,7 +56,7 @@ function flickrfield_field_settings($op, $field) {
       }
       else if ($field['type'] == 'flickrfield_photoset') {
         $columns = array(
-          'id' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
+          'flickrid' => array('type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'sortable' => TRUE),
         );
       }
       return $columns;
@@ -96,7 +96,7 @@ function flickrfield_elements() {
     ),
     'flickrfield_flickrid' => array(
       '#input' => TRUE,
-      '#columns' => array('id'),
+      '#columns' => array('flickrid'),
       '#process' => array('flickrfield_flickrid_process'),
     )
   );
@@ -136,12 +136,12 @@ function flickrfield_process($element, $edit, $form_state, $form) {
 }
 
 function flickrfield_flickrid_process($element, $edit, $form_state, $form) {
-  $element['id'] = array(
+  $element['flickrid'] = array(
     '#type' => 'textfield',
     '#field_prefix' => t('Flickr ID: '),
     '#size' => 20,
     '#maxlength' => 20,
-    '#default_value' => !empty($element['#value']['id']) ? $element['#value']['id'] : '',
+    '#default_value' => !empty($element['#value']['flickrid']) ? $element['#value']['flickrid'] : '',
     '#attributes' => array('class' => 'flickrfield_flickrid'),
   );
   return $element;
@@ -292,7 +292,7 @@ function theme_flickrfield($element) {
 function theme_flickrfield_flickrid($element) {
   dpm($element);
   // Get textfield for flickr ID.
-  $flickrid = $element['id'];
+  $flickrid = $element['flickrid'];
   // Set the user defined title and help text.
   $flickrid['#title'] = $element['#title'];
   $flickrid['#description'] = $element['#description'];
