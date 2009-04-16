@@ -236,8 +236,8 @@ function theme_flickr_photos($uid, $photos) {
 function theme_flickr_photoset($ps, $owner, $size, $attribs = NULL) {
   if (module_exists('flickr_sets')) {
 	$output .= "<div class='flickr-photoset'>\n";
-	$photos = flickr_set_load($ps['id']);
-	foreach ((array) $photos['photoset']['photo'] as $photo) {
+  $photoset = flickr_photoset_get_photos($ps['id']);
+  foreach ((array) $photoset['photo'] as $photo) {
 	  //insert owner into $photo because theme_flickr_photo needs it
 	  $photo['owner'] = $owner;
 	  $output .= theme('flickr_photo', $photo, $size);
