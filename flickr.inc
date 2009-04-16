@@ -339,6 +339,37 @@ function flickr_photoset_get_list($nsid) {
 }
 
 /**
+ * @param $photoset_id
+ *   id of the photoset to get photos from
+ * @param $page
+ *   the page of results to return
+ * @param $per_page
+ *   the number of photos per page
+ *
+ * @return
+ *   response from the flickr method flickr.photosets.getPhotos
+ *   (http://www.flickr.com/services/api/flickr.photosets.getPhotos.html)
+ */
+function flickr_photoset_get_photos($photoset_id, $page = 1, $per_page = NULL) {
+  if (!isset($per_page)) {
+    $per_page = variable_get('flickr_photos_per_page', 20);
+  }
+
+  $response = flickr_request(
+    'flickr.photosets.getPhotos',
+    array(
+      'photoset_id' => $photoset_id,
+      'page' => $page,
+      'per_page' => $per_page,
+    )
+  );
+  if ($response) {
+    return $response['photoset'];
+  }
+  return FALSE;
+}
+
+/**
  * @param $nsid The Flickr user's NSID
  *
  * @return
