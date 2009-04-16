@@ -1,5 +1,5 @@
 <?php
-// $Id: flickr_sets.module,v 1.10.2.3 2009/03/17 21:56:54 paulbooker Exp $
+// $Id: flickr_sets.module,v 1.10.2.4 2009/03/25 16:18:08 paulbooker Exp $
 
 require_once(drupal_get_path('module', 'flickr') .'/flickr.inc');
 
@@ -32,7 +32,7 @@ function flickr_sets_menu() {
 
 function flickr_set_load($sid, $page = 1) {
   // TODO: Not sure why this called for /flickr and does not show for admin role
-  if (is_integer($sid)) {	
+  if (is_numeric($sid)) {	
     return flickr_request('flickr.photosets.getPhotos',
     array(
       'photoset_id' => $sid,
