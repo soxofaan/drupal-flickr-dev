@@ -181,7 +181,7 @@ function flickrfield_field_formatter_info() {
   );
   foreach ($sizes as $size => $info) {
     $formatters['photoset_primaryphoto_size'. $size] = array(
-      'label' => t('Primary set photo at size "@size"', array('@size' => $info['label'])),
+      'label' => t('Primary set photo at size "@size" with link to node', array('@size' => $info['label'])),
       'field types' => array('flickrfield_photoset'),
     );
   }
