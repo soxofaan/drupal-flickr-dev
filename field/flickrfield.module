@@ -251,7 +251,7 @@ function theme_flickrfield_field_formatter($element) {
 }
 
 /**
- * Theme a Flickr photo et as the primary photo of that set.
+ * Theme a Flickr photo set as the primary photo of that set.
  */
 function theme_flickrfield_formatter_photoset_primaryphoto($element) {
   require_once(drupal_get_path('module', 'flickr') .'/flickr.inc');
