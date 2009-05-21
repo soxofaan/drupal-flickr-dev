@@ -190,7 +190,11 @@ function flickrfield_field_formatter_info() {
     );
   }
   $formatters['photoset_flickrcomslideshow'] = array(
-    'label' => 'Embedded Flickr.com flash slideshow',
+    'label' => 'Embedded flickr.com flash slideshow',
+    'field types' => array('flickrfield_photoset'),
+  );
+  $formatters['photoset_flickrcomsetlink'] = array(
+    'label' => 'Link to photo set on flickr.com',
     'field types' => array('flickrfield_photoset'),
   );
   return $formatters;
@@ -239,7 +243,10 @@ function flickrfield_theme() {
     ),
     'flickrfield_formatter_photoset_flickrcomslideshow' => array(
       'arguments' => array('element'),
-    )
+    ),
+    'flickrfield_formatter_photoset_flickrcomsetlink' => array(
+      'arguments' => array('element'),
+    ),
   );
 }
 
@@ -311,6 +318,12 @@ function theme_flickrfield_formatter_photoset_flickrcomslideshow($element) {
   return '<div class="flickr-photoset-slideshow">'
     .'<iframe align="center" src="' . $src .'" frameBorder="0" width="500" scrolling="no" height="500"></iframe>'
     .'</div>';
+}
+
+function theme_flickrfield_formatter_photoset_flickrcomsetlink($element) {
+  $set_data = flickr_photoset_get_info($element['#item']['flickrid']);
+  $set_url = flickr_photoset_page_url($set_data['owner'], $set_data['id']);
+  return l($set_url, $set_url);
 }
 
 /**
