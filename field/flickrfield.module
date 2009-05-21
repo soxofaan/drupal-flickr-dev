@@ -185,16 +185,16 @@ function flickrfield_field_formatter_info() {
       'field types' => array('flickrfield_photoset'),
     );
     $formatters['photoset_primaryphoto_size'. $size .'_linkflickrcomset'] = array(
-      'label' => t('Primary set photo at size "@size" with link to set on flickr.com', array('@size' => $info['label'])),
+      'label' => t('Primary set photo at size "@size" with link to set on Flickr.com', array('@size' => $info['label'])),
       'field types' => array('flickrfield_photoset'),
     );
   }
   $formatters['photoset_flickrcomslideshow'] = array(
-    'label' => 'Embedded flickr.com flash slideshow',
+    'label' => 'Embedded Flickr.com flash slideshow',
     'field types' => array('flickrfield_photoset'),
   );
   $formatters['photoset_flickrcomsetlink'] = array(
-    'label' => 'Link to photo set on flickr.com',
+    'label' => 'Link to photo set on Flickr.com',
     'field types' => array('flickrfield_photoset'),
   );
   return $formatters;
