@@ -175,16 +175,24 @@ function flickrfield_field_formatter_info() {
       );
   }
   // Formatters for Flickr photoset CCK field.
+  foreach ($sizes as $size => $info) {
+    $formatters['photoset_primaryphoto_size'. $size .'_nolink'] = array(
+      'label' => t('Primary set photo at size "@size"', array('@size' => $info['label'])),
+      'field types' => array('flickrfield_photoset'),
+    );
+    $formatters['photoset_primaryphoto_size'. $size .'_linknode'] = array(
+      'label' => t('Primary set photo at size "@size" with link to node', array('@size' => $info['label'])),
+      'field types' => array('flickrfield_photoset'),
+    );
+    $formatters['photoset_primaryphoto_size'. $size .'_linkflickrcomset'] = array(
+      'label' => t('Primary set photo at size "@size" with link to set on flickr.com', array('@size' => $info['label'])),
+      'field types' => array('flickrfield_photoset'),
+    );
+  }
   $formatters['photoset_flickrcomslideshow'] = array(
     'label' => 'Embedded Flickr.com flash slideshow',
     'field types' => array('flickrfield_photoset'),
   );
-  foreach ($sizes as $size => $info) {
-    $formatters['photoset_primaryphoto_size'. $size] = array(
-      'label' => t('Primary set photo at size "@size" with link to node', array('@size' => $info['label'])),
-      'field types' => array('flickrfield_photoset'),
-    );
-  }
   return $formatters;
 }
 
@@ -200,7 +208,15 @@ function flickrfield_theme() {
       'function' => 'theme_flickrfield_field_formatter',
     );
     // Theme function for the primary photo formatters of a Flickr photo set.
-    $themes['flickrfield_formatter_photoset_primaryphoto_size'. $size] = array(
+    $themes['flickrfield_formatter_photoset_primaryphoto_size'. $size .'_nolink'] = array(
+      'arguments' => array('element'),
+      'function' => 'theme_flickrfield_formatter_photoset_primaryphoto',
+    );
+    $themes['flickrfield_formatter_photoset_primaryphoto_size'. $size .'_linknode'] = array(
+      'arguments' => array('element'),
+      'function' => 'theme_flickrfield_formatter_photoset_primaryphoto',
+    );
+    $themes['flickrfield_formatter_photoset_primaryphoto_size'. $size .'_linkflickrcomset'] = array(
       'arguments' => array('element'),
       'function' => 'theme_flickrfield_formatter_photoset_primaryphoto',
     );
@@ -216,6 +232,9 @@ function flickrfield_theme() {
       'arguments' => array('element'),
     ),
     'flickrfield_flickrid' => array(
+      'arguments' => array('element'),
+    ),
+    'flickrfield_photoset_primaryphoto' => array(
       'arguments' => array('element'),
     ),
     'flickrfield_formatter_photoset_flickrcomslideshow' => array(
@@ -258,12 +277,25 @@ function theme_flickrfield_formatter_photoset_primaryphoto($element) {
   if (empty($element['#item']['flickrid'])) {
     return;
   }
-  $size = substr($element['#formatter'], -1);
-  $photo_data = flickr_photoset_get_info($element['#item']['flickrid']);
-  $img = flickr_img($photo_data, $size);
-  $photo_url = flickr_photoset_page_url($photo_data['owner'], $photo_data['id']);
-  $node = $element['#node'];
-  return theme('flickrfield_photoset', $img, $photo_url, $size, $photo_data, $node);
+  $formatter_info = explode('_', $element['#formatter']);
+  $set_data = flickr_photoset_get_info($element['#item']['flickrid']);
+  $set_url = flickr_photoset_page_url($set_data['owner'], $set_data['id']);
+  $size = substr($formatter_info[2], -1);
+  $img = flickr_img($set_data, $size);
+  switch ($formatter_info[3]) {
+    case 'linknode':
+      $link = 'node/'. $element['#node']->nid;
+      break;
+    case 'linkflickrcomset':
+      $link = $set_url;
+      break;
+    default:
+      $link = NULL;
+      break;
+  }
+  $title = is_array($photo_data['title']) ? $photo_data['title']['_content'] : $photo_data['title'];
+
+  return theme('flickrfield_photoset_primaryphoto', $img, $link, $set_url, $size, $title);
 }
 
 /**
@@ -309,6 +341,17 @@ function theme_flickrfield_photoset($img, $photo_url, $formatter, $photo_data, $
     $output = '<div class="flickr-photoset-img">'. l($img, 'node/'. $node->nid, array('attributes' => array('title' => $title), 'absolute' => TRUE, 'html' => TRUE)) . '</div>';
   }
   $output .= '<div class="flickr-citation"><cite>'. l(t('Source: Flickr'), $photo_url) .'</cite></div>';
+  return $output;
+}
+
+function theme_flickrfield_photoset_primaryphoto($img, $link, $photo_url, $size, $title) {
+  if ($link) {
+    $output = '<div class="flickr-photoset-img">'. l($img, $link, array('attributes' => array('title' => $title), 'html' => TRUE)) . '</div>';
+  }
+  else {
+    $output = '<div class="flickr-photoset-img">'. $img .'</div>';
+  }
+  $output .= '<div class="flickr-citation">'. l(t('Source: Flickr'), $photo_url) .'</div>';
   return $output;
 }
 
