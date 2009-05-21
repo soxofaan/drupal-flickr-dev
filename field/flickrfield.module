@@ -320,6 +320,9 @@ function theme_flickrfield_formatter_photoset_flickrcomslideshow($element) {
     .'</div>';
 }
 
+/**
+ * Theme a Flickr photo set as a simple link to the photo set page on Flickr.com.
+ */
 function theme_flickrfield_formatter_photoset_flickrcomsetlink($element) {
   $set_data = flickr_photoset_get_info($element['#item']['flickrid']);
   $set_url = flickr_photoset_page_url($set_data['owner'], $set_data['id']);
@@ -357,14 +360,24 @@ function theme_flickrfield_photoset($img, $photo_url, $formatter, $photo_data, $
   return $output;
 }
 
-function theme_flickrfield_photoset_primaryphoto($img, $link, $photo_url, $size, $title) {
+/**
+ * Theme function for showing a primary photo of a photo set with optional link.
+ * Also includes a link to Flickr.com photo set page to comply with terms of service.
+ * @param $img HTML code for image
+ * @param $link link to which the image should link to
+ * @param $set_url url of the photo set on Flickr.com
+ * @param $size the flickr size of the image
+ * @param $title title to use for the link
+ * @return unknown_type
+ */
+function theme_flickrfield_photoset_primaryphoto($img, $link, $set_url, $size, $title) {
   if ($link) {
     $output = '<div class="flickr-photoset-img">'. l($img, $link, array('attributes' => array('title' => $title), 'html' => TRUE)) . '</div>';
   }
   else {
     $output = '<div class="flickr-photoset-img">'. $img .'</div>';
   }
-  $output .= '<div class="flickr-citation">'. l(t('Source: Flickr'), $photo_url) .'</div>';
+  $output .= '<div class="flickr-citation">'. l(t('Source: Flickr'), $set_url) .'</div>';
   return $output;
 }
 
